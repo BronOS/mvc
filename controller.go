@@ -11,7 +11,7 @@ import (
 )
 
 // ControllerInterface calls "Action" method on received request.
-// In case when error returned, calls http.Error with response code and error message.
+// In case when HTTPError is returned, calls http.Error with HTTPError.ResponseCode and error message.
 type ControllerInterface interface {
 	Action(w http.ResponseWriter, r *http.Request) *HTTPError
 }
@@ -61,7 +61,7 @@ func (c *AbstractController) ScanForm(r *http.Request, schema interface{}) *HTTP
 }
 
 // AbstractJSONController provides functionality related to JSON request and response,
-// such as parsing of JSON body, writing schema struct into response body as a JSON string
+// such as parsing/scanning of JSON body, writing schema struct into response body as a JSON string
 type AbstractJSONController struct {
 	AbstractController
 }
