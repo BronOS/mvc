@@ -22,9 +22,17 @@ type AbstractController struct {
 	schemaDecoder *modSchema.Decoder
 }
 
+func (c *AbstractController) getSchemaDecoder() *modSchema.Decoder {
+	if c.schemaDecoder == nil {
+		c.schemaDecoder = modSchema.NewDecoder()
+	}
+
+	return c.schemaDecoder
+}
+
 // ScanQuery scans query/URI string into schema struct based on gorilla/schema lib
 func (c *AbstractController) ScanQuery(r *http.Request, schema interface{}) *HTTPError {
-	if err := c.schemaDecoder.Decode(schema, r.URL.Query()); err != nil {
+	if err := c.getSchemaDecoder().Decode(schema, r.URL.Query()); err != nil {
 		return NewHTTPError(http.StatusBadRequest, err)
 	}
 
@@ -40,7 +48,7 @@ func (c *AbstractController) ScanVars(r *http.Request, schema interface{}) *HTTP
 		mVars[k] = []string{v}
 	}
 
-	if err := c.schemaDecoder.Decode(schema, mVars); err != nil {
+	if err := c.getSchemaDecoder().Decode(schema, mVars); err != nil {
 		return NewHTTPError(http.StatusBadRequest, err)
 	}
 
@@ -53,7 +61,7 @@ func (c *AbstractController) ScanForm(r *http.Request, schema interface{}) *HTTP
 		return NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := c.schemaDecoder.Decode(schema, r.PostForm); err != nil {
+	if err := c.getSchemaDecoder().Decode(schema, r.PostForm); err != nil {
 		return NewHTTPError(http.StatusBadRequest, err)
 	}
 
