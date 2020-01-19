@@ -95,7 +95,7 @@ func (c *AbstractJSONController) ScanJSONBody(r *http.Request, schema interface{
 }
 
 // WriteJSONResponse writes schema struct into response body as a JSON string
-func (c *AbstractJSONController) WriteJSONResponse(w http.ResponseWriter, schema interface{}, responseCode *int) *HTTPError {
+func (c *AbstractJSONController) WriteJSONResponse(w http.ResponseWriter, schema interface{}, responseCode int) *HTTPError {
 	b, err := json.Marshal(schema)
 	if err != nil {
 		return NewHTTPError(http.StatusInternalServerError, err)
@@ -103,13 +103,13 @@ func (c *AbstractJSONController) WriteJSONResponse(w http.ResponseWriter, schema
 
 	w.Header().Set("Content-Type", "application/json")
 
-	code := 200
-	if responseCode != nil {
-		code = *responseCode
-	}
-
-	w.WriteHeader(code)
+	w.WriteHeader(responseCode)
 	w.Write(b)
 
 	return nil
+}
+
+// WriteJSONResponseOK writes schema struct into response body as a JSON string with response code 200 OK
+func (c *AbstractJSONController) WriteJSONResponseOK(w http.ResponseWriter, schema interface{}) *HTTPError {
+	return c.WriteJSONResponse(w, schema, http.StatusOK)
 }
